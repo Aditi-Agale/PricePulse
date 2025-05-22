@@ -1,10 +1,10 @@
 import sqlite3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from scraper import scrape_amazon
 from flask_apscheduler import APScheduler
+from scraper import scrape_amazon
 
-# --- Flask setup ---
+# --- Flask Setup ---
 app = Flask(__name__)
 CORS(app)
 
@@ -32,7 +32,8 @@ def scheduled_scrape():
         data, error = scrape_amazon(product['url'])
         if data and data['price'] is not None:
             print(f"[UPDATED] {data['name']} — ₹{data['price']}")
-            cur.execute('UPDATE products SET current_price=? WHERE id=?', (data['price'], product['id']))
+            cur.execute('UPDATE products SET name=?, image=?, current_price=? WHERE id=?',
+                        (data['name'], data['image'], data['price'], product['id']))
             cur.execute('INSERT INTO price_history (product_id, price) VALUES (?, ?)', (product['id'], data['price']))
     conn.commit()
     conn.close()
@@ -40,6 +41,7 @@ def scheduled_scrape():
 scheduler.add_job(id='Scheduled Scrape', func=scheduled_scrape, trigger='interval', minutes=60)
 
 # --- API Routes ---
+
 @app.route('/api/products/track', methods=['POST'])
 def track_product():
     url = request.json.get('url')
@@ -99,5 +101,30 @@ def get_product(product_id):
         'priceHistory': history
     })
 
+@app.route('/api/submit', methods=['POST'])
+def submit_url():
+    url = request.json.get('url')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('INSERT INTO products (url) VALUES (?)', (url,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Product submitted for tracking"})
+
+@app.route('/api/history', methods=['GET'])
+def get_history():
+    url = request.args.get('url')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id FROM products WHERE url=?', (url,))
+    product = cur.fetchone()
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
+    cur.execute('SELECT price, timestamp FROM price_history WHERE product_id=? ORDER BY timestamp', (product['id'],))
+    history = [{'price': row[0], 'timestamp': row[1]} for row in cur.fetchall()]
+    conn.close()
+    return jsonify(history)
+
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(debug=True, port=5000)
