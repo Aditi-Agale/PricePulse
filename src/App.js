@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import TrackForm from './components/TrackForm';
+import ProductPreview from './components/ProductPreview';
+import PriceGraph from './components/PriceGraph';
 
 function App() {
+  const [product, setProduct] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'Arial, sans-serif' }}>
+      <h1 style={{ color: '#2196f3' }}>PricePulse - E-Commerce Price Tracker</h1>
+      <TrackForm onTracked={setProduct} />
+      <ProductPreview product={product} />
+      <PriceGraph history={product ? product.priceHistory : []} />
     </div>
   );
 }
