@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+<center>
+  <img src="https://readme-typing-svg.herokuapp.com?color=FFADD8E6&size=40&width=900&height=80&lines=Welcome+to+PricePulse" />
+</center>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> A web app that helps users track historical prices of Amazon products over time. Just paste the product URL, and the app fetches and displays price trends along with the product details!
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📚 Table of Contents
+- [🚀 Key Features](#-key-features)
+- [🌐 Live Preview](#-live-preview)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📥 Getting Started](#-getting-started)
+- [🔁 Application Flow](#-application-flow)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 Key Features
+- 🔗 **Amazon Product Input**: Users can paste the Amazon product URL to start tracking.
+- 📈 **Live Price Graph**: Displays a beautiful line chart showing historical price trends.
+- 🏷️ **Current Price Display**: Shows the latest price and a link preview with the product image and title.
+- 🎯 **Target Price Alerts**: Users can enter a desired price, and get notified via email if the price drops below it.
+- 📬 **Email Notifications**: Integrated email alerts when the tracked product meets the target price.
+- ♻️ **Automated Scraping**: Periodically scrapes the product page to check for price changes.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🌐 Live Preview
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> Coming soon! 
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🛠️ Tech Stack
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend  
+- React.js  
+- Recharts (for graphing)  
+- Axios  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Backend  
+- Python (Flask)  
+- SQLite  
+- APScheduler  
 
-### `npm run eject`
+### Others  
+- Email Alerts with SMTP  
+- Cron jobs / `APScheduler` for scheduled scraping  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📥 Getting Started
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Aditi-Agale/PricePulse.git
+cd PricePulse
+```
+### 2. Backend (Flask API)
+```bash
+cd backend
+pip install -r requirements.txt
+python app.py
+```
+### 3. Frontend (React.js)
+```bash
+cd ../frontend
+npm install
+npm start
+```
+---
+## 🔁 Application Flow
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
