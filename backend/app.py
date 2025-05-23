@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_apscheduler import APScheduler
 from scraper import scrape_amazon
+from emailer import send_email
 
 # --- Flask Setup ---
 app = Flask(__name__)
@@ -22,12 +23,32 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# --- Scheduled Scraping ---
+# --- Alert Checker ---
+def check_alerts(product_id, current_price, name, url):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, email, target_price FROM alerts WHERE product_id=? AND is_sent=0', (product_id,))
+    alerts = cur.fetchall()
+
+    for alert in alerts:
+        alert_id, email, target_price = alert
+        if current_price <= target_price:
+            subject = f"Price Alert: {name} is ₹{current_price}"
+            body = f"The product you're tracking has dropped to ₹{current_price}!\n\nLink: {url}"
+            send_email(email, subject, body)
+            cur.execute('UPDATE alerts SET is_sent=1 WHERE id=?', (alert_id,))
+            print(f"[ALERT TRIGGERED] Email sent to {email}")
+
+    conn.commit()
+    conn.close()
+
+# --- Scheduled Scraping Every 30 Minutes ---
 def scheduled_scrape():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT id, url FROM products')
     products = cur.fetchall()
+
     for product in products:
         data, error = scrape_amazon(product['url'])
         if data and data['price'] is not None:
@@ -35,10 +56,12 @@ def scheduled_scrape():
             cur.execute('UPDATE products SET name=?, image=?, current_price=? WHERE id=?',
                         (data['name'], data['image'], data['price'], product['id']))
             cur.execute('INSERT INTO price_history (product_id, price) VALUES (?, ?)', (product['id'], data['price']))
+            check_alerts(product['id'], data['price'], data['name'], product['url'])
+
     conn.commit()
     conn.close()
 
-scheduler.add_job(id='Scheduled Scrape', func=scheduled_scrape, trigger='interval', minutes=60)
+scheduler.add_job(id='Scheduled Scrape', func=scheduled_scrape, trigger='interval', minutes=30)
 
 # --- API Routes ---
 
@@ -126,5 +149,25 @@ def get_history():
     conn.close()
     return jsonify(history)
 
+@app.route('/api/alerts', methods=['POST'])
+def set_alert():
+    data = request.json
+    product_id = data.get('product_id')
+    email = data.get('email')
+    target_price = data.get('target_price')
+
+    if not all([product_id, email, target_price]):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('INSERT INTO alerts (product_id, email, target_price, is_sent) VALUES (?, ?, ?, 0)',
+                (product_id, email, target_price))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Alert set successfully'})
+
+# --- Run Server ---
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

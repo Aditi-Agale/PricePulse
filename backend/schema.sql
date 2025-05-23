@@ -30,3 +30,11 @@ CREATE TABLE tracked_products (
     target_price REAL,
     FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
 );
+CREATE TABLE alerts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER,
+    email TEXT NOT NULL,
+    target_price REAL NOT NULL,
+    is_sent INTEGER DEFAULT 0,
+    FOREIGN KEY(product_id) REFERENCES products(id)
+);
