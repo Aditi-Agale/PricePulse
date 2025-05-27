@@ -18,10 +18,11 @@ CREATE TABLE products (
 CREATE TABLE price_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id INTEGER,
+    timestamp TEXT,
     price REAL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
+    FOREIGN KEY (product_id) REFERENCES products (id)
 );
+
 
 -- Tracked products by users
 CREATE TABLE tracked_products (

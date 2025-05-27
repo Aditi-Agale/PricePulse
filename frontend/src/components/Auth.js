@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Auth.css";
 
 const Auth = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true); // toggle between login and signup
@@ -45,58 +44,80 @@ const Auth = ({ onAuthSuccess }) => {
     }
     setLoading(false);
   };
+  return(
+    <>
+<div className="auth-container">
+        <h2>{isLogin ? "Welcome Back" : "Create Account"}</h2>
+        <div className="auth-form">
+          <div className="input-group">
+            <label>Email Address</label>
+            <div className="input-wrapper">
+              <span className="input-icon">📧</span>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
+              />
+            </div>
+          </div>
 
-  return (
-    <div className="auth-container">
-      <h2>{isLogin ? "Login" : "Sign Up"}</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <label>
-          Email
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-          />
-        </label>
+          <div className="input-group">
+            <label>Password</label>
+            <div className="input-wrapper">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
+              />
+            </div>
+          </div>
 
-        <label>
-          Password
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="********"
-          />
-        </label>
+          {error && (
+            <div className="auth-error">
+              {error}
+            </div>
+          )}
 
-        {error && <div className="auth-error">{error}</div>}
+          <div 
+            disabled={loading} 
+            className="submit-button"
+            onClick={handleSubmit}
+            style={{ 
+              pointerEvents: loading ? 'none' : 'auto',
+              opacity: loading ? 0.7 : 1
+            }}
+          >
+            {loading && <span className="loading-spinner"></span>}
+            {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+          </div>
+        </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Please wait..." : isLogin ? "Login" : "Sign Up"}
-        </button>
-      </form>
-
-      <div className="auth-toggle">
-        {isLogin ? (
-          <>
-            Don't have an account?{" "}
-            <button onClick={toggleMode} className="link-btn">
-              Sign Up
-            </button>
-          </>
-        ) : (
-          <>
-            Already have an account?{" "}
-            <button onClick={toggleMode} className="link-btn">
-              Login
-            </button>
-          </>
-        )}
+        <div className="auth-toggle">
+          {isLogin ? (
+            <>
+              Don't have an account?{" "}
+              <button onClick={toggleMode} className="link-btn">
+                Sign Up
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button onClick={toggleMode} className="link-btn">
+                Sign In
+              </button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

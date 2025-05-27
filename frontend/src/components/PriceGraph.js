@@ -12,22 +12,26 @@ import {
 function PriceGraph({ history }) {
   if (!history || history.length === 0) {
     return (
-      <div
-        style={{
-          width: '100%',
-          height: 200,
-          border: '1px dashed #bbb',
-          background: '#f4f6f8',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#888',
-          fontStyle: 'italic',
-          marginBottom: 16,
-          borderRadius: 8,
-        }}
-      >
-        No price data available
+      <div style={{
+        maxWidth: '600px',
+        margin: '0 auto 40px auto',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e5e7eb',
+        borderRadius: '12px',
+        padding: '40px',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          fontSize: '48px',
+          marginBottom: '16px',
+          opacity: '0.3',
+        }}>📊</div>
+        <div style={{
+          fontSize: '16px',
+          color: '#6b7280',
+        }}>
+          No price data available
+        </div>
       </div>
     );
   }
@@ -40,10 +44,6 @@ function PriceGraph({ history }) {
         day: 'numeric',
         month: 'short',
       }),
-      time: date.toLocaleTimeString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
       fullTimestamp: `${date.toLocaleDateString('en-IN', {
         day: 'numeric',
         month: 'short',
@@ -55,62 +55,82 @@ function PriceGraph({ history }) {
   });
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: 300,
-        backgroundColor: '#fff',
-        padding: 16,
-        border: '1px solid #ddd',
-        borderRadius: 10,
-        boxShadow: '0 3px 12px rgba(0, 0, 0, 0.06)',
-        marginBottom: 20,
-      }}
-    >
-      <div style={{ fontWeight: '600', fontSize: 18, marginBottom: 14 }}>
-        📉 Price History Graph
+    <div style={{
+      maxWidth: '600px',
+      margin: '0 auto 40px auto',
+      backgroundColor: '#ffffff',
+      border: '1px solid #e5e7eb',
+      borderRadius: '12px',
+      padding: '24px',
+    }}>
+      <h3 style={{
+        fontSize: '18px',
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: '20px',
+        borderBottom: '1px solid #f3f4f6',
+        paddingBottom: '12px',
+      }}>
+        Price History
+      </h3>
+
+      <div style={{ width: '100%', height: '300px' }}>
+        <ResponsiveContainer>
+          <LineChart data={data} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+            <XAxis
+              dataKey="date"
+              stroke="#6b7280"
+              tick={{ fontSize: 12 }}
+              axisLine={{ stroke: '#e5e7eb' }}
+              tickLine={{ stroke: '#e5e7eb' }}
+            />
+            <YAxis
+              stroke="#6b7280"
+              domain={['dataMin - 100', 'dataMax + 100']}
+              tickFormatter={(value) => `₹${value}`}
+              tick={{ fontSize: 12 }}
+              axisLine={{ stroke: '#e5e7eb' }}
+              tickLine={{ stroke: '#e5e7eb' }}
+            />
+            <Tooltip
+              formatter={(value) => [`₹${value}`, 'Price']}
+              labelFormatter={(label, payload) => {
+                const full = payload[0]?.payload?.fullTimestamp;
+                return full;
+              }}
+              contentStyle={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '14px',
+                padding: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="price"
+              stroke="#111827"
+              strokeWidth={2}
+              dot={{ 
+                r: 4, 
+                stroke: '#111827', 
+                strokeWidth: 2, 
+                fill: '#ffffff'
+              }}
+              activeDot={{ 
+                r: 6, 
+                stroke: '#111827', 
+                strokeWidth: 2,
+                fill: '#111827'
+              }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
-      <ResponsiveContainer>
-        <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
-          <XAxis
-            dataKey="date"
-            stroke="#555"
-            tick={{ fontSize: 12 }}
-            label={{ value: 'Date', position: 'insideBottomRight', offset: -5 }}
-          />
-          <YAxis
-            stroke="#555"
-            domain={['auto', 'auto']}
-            tickFormatter={(value) => `₹${value}`}
-            tick={{ fontSize: 12 }}
-          />
-          <Tooltip
-            formatter={(value) => `₹${value}`}
-            labelFormatter={(label, payload) => {
-              const full = payload[0]?.payload?.fullTimestamp;
-              return `📅 ${full}`;
-            }}
-            contentStyle={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #ccc',
-              borderRadius: 6,
-              fontSize: 14,
-              padding: 10,
-            }}
-          />
-          <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
-          <Line
-            type="monotone"
-            dataKey="price"
-            stroke="#4caf50"
-            strokeWidth={3}
-            dot={{ r: 4, stroke: '#388e3c', strokeWidth: 2, fill: '#a5d6a7' }}
-            activeDot={{ r: 6, stroke: '#2e7d32', strokeWidth: 2 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
     </div>
   );
 }
+
 
 export default PriceGraph;
