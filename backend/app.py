@@ -4,10 +4,11 @@ from flask_cors import CORS
 from flask_apscheduler import APScheduler
 from scraper import scrape_amazon
 from emailer import send_email
+import hashlib
 
 # --- Flask Setup ---
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -65,8 +66,11 @@ scheduler.add_job(id='Scheduled Scrape', func=scheduled_scrape, trigger='interva
 
 # --- API Routes ---
 
-@app.route('/api/products/track', methods=['POST'])
+@app.route('/api/products/track', methods=['POST', 'OPTIONS'])
 def track_product():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'OK'}), 200
+
     url = request.json.get('url')
     data, error = scrape_amazon(url)
     if error:
@@ -124,8 +128,11 @@ def get_product(product_id):
         'priceHistory': history
     })
 
-@app.route('/api/submit', methods=['POST'])
+@app.route('/api/submit', methods=['POST', 'OPTIONS'])
 def submit_url():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'OK'}), 200
+
     url = request.json.get('url')
     conn = get_db_connection()
     cur = conn.cursor()
@@ -149,8 +156,39 @@ def get_history():
     conn.close()
     return jsonify(history)
 
-@app.route('/api/alerts', methods=['POST'])
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+users = {}
+
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if email in users:
+        return jsonify({'error': 'User already exists'}), 400
+    
+    users[email] = password
+    return jsonify({'email': email}), 200
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if users.get(email) != password:
+        return jsonify({'error': 'Invalid credentials'}), 401
+    
+    return jsonify({'email': email}), 200
+
+
+@app.route('/api/alerts', methods=['POST', 'OPTIONS'])
 def set_alert():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'OK'}), 200
+
     data = request.json
     product_id = data.get('product_id')
     email = data.get('email')
