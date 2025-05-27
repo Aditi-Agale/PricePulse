@@ -18,8 +18,8 @@ const Auth = ({ onAuthSuccess }) => {
     setError(null);
 
     const endpoint = isLogin
-      ? "http://localhost:5000/api/auth/login"
-      : "http://localhost:5000/api/auth/register";
+      ? "https://pricepulse-30l9.onrender.com/api/auth/login"
+      : "https://pricepulse-30l9.onrender.com/api/auth/register";
 
     try {
       const res = await fetch(endpoint, {

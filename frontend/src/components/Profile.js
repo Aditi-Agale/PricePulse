@@ -17,7 +17,7 @@ const Profile = ({ user }) => {
   // Fetch tracked products
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await fetch(`http://localhost:5000/api/products/${user.user_id}`);
+      const res = await fetch(`https://pricepulse-30l9.onrender.com/api/products/${user.user_id}`);
       const data = await res.json();
       setProducts(data.products);
     };
@@ -29,7 +29,7 @@ const Profile = ({ user }) => {
     const fetchPriceHistory = async () => {
       const allPriceData = {};
       for (const product of products) {
-        const res = await fetch(`http://localhost:5000/api/prices/${product.id}`);
+        const res = await fetch(`https://pricepulse-30l9.onrender.com/api/prices/${product.id}`);
         const data = await res.json();
         allPriceData[product.id] = data.history;
       }

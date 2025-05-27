@@ -26,7 +26,7 @@ function TrackForm({ onTracked, alertStatus }) {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/products/track', {
+      const response = await fetch('https://pricepulse-30l9.onrender.com/api/products/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
