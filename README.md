@@ -30,7 +30,7 @@
 
 ## 🌐 Live Preview
 
-**https://pricepulse-tracker.vercel.app/**
+**COMING SOON**
 
 ---
 
@@ -61,7 +61,7 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YourUsername/PricePulse.git
+git clone https://github.com/Aditi-Agale/PricePulse.git
 cd PricePulse
 ```
 
